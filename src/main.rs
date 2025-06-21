@@ -3,6 +3,7 @@ use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 
 #[derive(Component)]
+
 struct Block;
 
 #[derive(Component)]
