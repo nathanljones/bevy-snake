@@ -3,7 +3,6 @@ use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 
 #[derive(Component)]
-
 struct Block;
 
 #[derive(Component)]
@@ -41,8 +40,8 @@ fn move_block(
     mut block: Query<&mut Position, With<Block>>,
     keyboard_input: Res<ButtonInput<KeyCode>>,
     window_query: Query<&Window, With<PrimaryWindow>>,
-) {
-    let window = window_query.single().unwrap();
+) -> Result {
+    let window = window_query.single()?;
     if let Ok(mut position) = block.single_mut() {
         if keyboard_input.pressed(KeyCode::ArrowUp) {
             if position.0.y > window.height() / 2.0 {
@@ -70,6 +69,7 @@ fn move_block(
             };
         }
     }
+    Ok(())
 }
 fn project_positions(mut block_position: Query<(&mut Transform, &Position), With<Block>>) {
     for (mut transform, position) in &mut block_position {
