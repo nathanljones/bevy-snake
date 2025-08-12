@@ -1,7 +1,9 @@
-
+use std::time::Duration;
 use bevy::color::palettes::css::{BLUE, GREEN};
 use bevy::prelude::*;
+use bevy::time::common_conditions::on_timer;
 use bevy::window::PrimaryWindow;
+
 
 #[derive(Component)]
 struct SnakeHead;
@@ -33,7 +35,7 @@ fn main() {
         .add_systems(Startup, (spawn_camera, spawn_snake_head, spawn_snake_body))
         .add_systems(Update, (change_snake_direction, project_positions))
         //.add_systems(Update, change_speed)
-        .add_systems(FixedUpdate,move_snake)
+        .add_systems(Update,move_snake.run_if(on_timer(Duration::from_millis(150))))
         .insert_resource(Time::<Fixed>::from_seconds(0.15))
         .run();
 }
