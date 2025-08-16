@@ -124,7 +124,7 @@ fn move_snake(
     mut snake_head: Query<&mut GridLocation, With<SnakeHead>>,
     mut snake_segments: Query<&mut GridLocation, (With<SnakeSegment>, Without<SnakeHead>)>,
     current_snake_direction: Res<CurrentSnakeDirection>,
-) -> Result {
+) {
     if let Ok(mut snake_head_position) = snake_head.single_mut() {
         let snake_head_pos = snake_head_position.0;
         match current_snake_direction.snake_direction {
@@ -141,7 +141,6 @@ fn move_snake(
 
 
     }
-    Ok(())
 }
 fn project_positions(mut block_position: Query<(&mut Transform, &Position)>) {
     for (mut transform, position) in &mut block_position {
