@@ -1,4 +1,4 @@
-use bevy::color::palettes::css::{BLUE, GREEN, LIGHT_GREEN};
+use bevy::color::palettes::css::{BLUE, GREEN, LIGHT_GREEN, YELLOW};
 use bevy::prelude::*;
 use bevy::time::common_conditions::on_timer;
 use std::time::Duration;
@@ -42,7 +42,7 @@ fn main() {
             (
                 spawn_camera,
                 spawn_snake_head,
-                //spawn_snake_body,
+                spawn_snake_body,
                 setup_board,
             ),
         )
@@ -88,20 +88,20 @@ fn spawn_snake_body(
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     let shape = Rectangle::new(20.0, 20.0);
-    let colour = Color::Srgba(GREEN);
+    let colour = Color::Srgba(YELLOW);
     let mesh = meshes.add(shape);
     let material = materials.add(colour);
     commands.spawn((
         SnakeSegment,
         Mesh2d(mesh.clone()),
         MeshMaterial2d(material.clone()),
-        Position(Vec2::new(0., -20.)),
+        GridLocation(Vec2::new(5., -4.)),
     ));
     commands.spawn((
         SnakeSegment,
         Mesh2d(mesh),
         MeshMaterial2d(material),
-        Position(Vec2::new(0., -40.)),
+        GridLocation(Vec2::new(5., -3.)),
     ));
 }
 
@@ -122,7 +122,7 @@ fn change_snake_direction(
 
 fn move_snake(
     mut snake_head: Query<&mut GridLocation, With<SnakeHead>>,
-    snake_segments: Query<&mut Position, (With<SnakeSegment>, Without<SnakeHead>)>,
+    mut snake_segments: Query<&mut GridLocation, (With<SnakeSegment>, Without<SnakeHead>)>,
     current_snake_direction: Res<CurrentSnakeDirection>,
 ) -> Result {
     if let Ok(mut snake_head_position) = snake_head.single_mut() {
@@ -133,15 +133,13 @@ fn move_snake(
             SnakeDirection::Left => snake_head_position.0.x -= 1.0,
             SnakeDirection::Right => snake_head_position.0.x += 1.0,
         }
-        /*
+
                let mut temp_pos = snake_head_pos;
                for mut snake_segment in &mut snake_segments.iter_mut() {
-                   let current_pos = snake_segment.0;
-                   snake_segment.0 = temp_pos;
-                   temp_pos = current_pos;
+                   std::mem::swap(&mut snake_segment.0, &mut temp_pos);
                }
 
-        */
+
     }
     Ok(())
 }
