@@ -1,7 +1,6 @@
 use bevy::color::palettes::css::{BLUE, GREEN, LIGHT_GREEN};
 use bevy::prelude::*;
 use bevy::time::common_conditions::on_timer;
-use bevy::window::PrimaryWindow;
 use std::time::Duration;
 
 #[derive(Resource)]
@@ -123,9 +122,8 @@ fn change_snake_direction(
 
 fn move_snake(
     mut snake_head: Query<&mut GridLocation, With<SnakeHead>>,
-    mut snake_segments: Query<&mut Position, (With<SnakeSegment>, Without<SnakeHead>)>,
+    snake_segments: Query<&mut Position, (With<SnakeSegment>, Without<SnakeHead>)>,
     current_snake_direction: Res<CurrentSnakeDirection>,
-    window_query: Query<&Window, With<PrimaryWindow>>,
 ) -> Result {
     if let Ok(mut snake_head_position) = snake_head.single_mut() {
         let snake_head_pos = snake_head_position.0;
@@ -157,25 +155,25 @@ fn project_board(    board: Res<GameBoard>,mut block_position: Query<(&mut Trans
 
     let total_board_width = board.width as f32 * board.cell_size;
     let total_board_height = board.height as f32 * board.cell_size;
-    let left_ofset = -total_board_width / 2.0;
-    let top_ofset = -total_board_height / 2.0;
+    let left_offset = -total_board_width / 2.0;
+    let top_offset = -total_board_height / 2.0;
 
 
 
     for (mut transform, position) in &mut block_position {
 
-        transform.translation.x = left_ofset + (position.0.x * board.cell_size);
-        transform.translation.y = top_ofset + (position.0.y * board.cell_size);
+        transform.translation.x = left_offset + (position.0.x * board.cell_size);
+        transform.translation.y = top_offset + (position.0.y * board.cell_size);
         transform.translation.z = 1.0;
-        println!("left offset = {:?}", left_ofset);
-        println!("top offset = {:?}", top_ofset);
-        println!("postion x = {:?}", left_ofset * position.0.x);
-        println!("postion y = {:?}", left_ofset * position.0.y);
+        println!("left offset = {:?}", left_offset);
+        println!("top offset = {:?}", top_offset);
+        println!("position x = {:?}", left_offset * position.0.x);
+        println!("position y = {:?}", left_offset * position.0.y);
 
     }
 }
 /*
-fn change_speed(    keyboard_input: Res<ButtonInput<KeyCode>>,mut time: ResMut<Time<Fixed>>){
+fn change_speed( keyboard_input: Res<ButtonInput<KeyCode>>,mut time: ResMut<Time<Fixed>>){
     if keyboard_input.pressed(KeyCode::Space) {
         time.set_timestep(Duration::from_secs(1));
     }
@@ -184,17 +182,14 @@ fn change_speed(    keyboard_input: Res<ButtonInput<KeyCode>>,mut time: ResMut<T
 
 fn draw_board(
     board: Res<GameBoard>,
-    mut block_position: Query<(&Transform, &Position)>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
-    window_query: Query<&Window, With<PrimaryWindow>>,
     mut commands: Commands,
-) -> Result {
+) {
     let total_board_width = board.width as f32 * board.cell_size;
     let total_board_height = board.height as f32 * board.cell_size;
-    let window = window_query.single()?;
-    let left_ofset = -total_board_width / 2.0;
-    let top_ofset = -total_board_height / 2.0;
+    let left_offset = -total_board_width / 2.0;
+    let top_offset = -total_board_height / 2.0;
 
     let shape = Rectangle::new(20.0, 20.0);
     let mesh = meshes.add(shape);
@@ -208,8 +203,8 @@ fn draw_board(
     println!("window height = {:?}", window.height());
     println!("total board height = {:?}", total_board_height);
 
-    println!("left offset = {:?}", left_ofset);
-    println!("top offset = {:?}", top_ofset);
+    println!("left offset = {:?}", left_offset);
+    println!("top offset = {:?}", top_offset);
 */
     for x in 0..board.width {
         for y in 0..board.height {
@@ -224,12 +219,11 @@ fn draw_board(
                 },*/
                 MeshMaterial2d(light_green_material.clone()),
                 Position(Vec2::new(
-                    ((left_ofset / 2.0) + (x as f32 * 20.0)),
-                    (top_ofset + (y as f32 * 20.0)),
+                    (left_offset / 2.0) + (x as f32 * 20.0),
+                    top_offset + (y as f32 * 20.0),
                 )),
             ));
         }
     }
 
-    Ok(())
 }
