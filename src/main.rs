@@ -39,10 +39,18 @@ enum SnakeDirection {
 struct CurrentSnakeDirection {
     snake_direction: SnakeDirection,
 }
+#[derive(Default, States, PartialEq, Debug, Clone, Eq, Hash)]
+enum FoodState {
+    #[default]
+    NeedsSpawning,
+    OnTheBoard,
+}
+
 fn main() {
     App::new()
-        .init_resource::<CurrentSnakeDirection>()
         .add_plugins(DefaultPlugins)
+        .init_resource::<CurrentSnakeDirection>()
+        .init_state::<FoodState>()
         .add_systems(
             Startup,
             (
@@ -50,7 +58,6 @@ fn main() {
                 spawn_snake_head,
                 spawn_snake_body,
                 setup_board,
-                spawn_apple,
             ),
         )
         .add_systems(
@@ -66,6 +73,10 @@ fn main() {
         .add_systems(
             Update,
             move_snake.run_if(on_timer(Duration::from_millis(150))),
+        )
+        .add_systems(
+            Update,
+            spawn_apple.run_if(in_state(FoodState::NeedsSpawning)),
         )
         .insert_resource(Time::<Fixed>::from_seconds(2.0))
         .run();
@@ -230,9 +241,7 @@ fn draw_board(
         }
     }
 }
-fn spawn_apple(
-    mut commands: Commands,
-) {
+fn spawn_apple(mut commands: Commands, mut next_state: ResMut<NextState<FoodState>>) {
     let mut rng = rand::rng();
     let apple_x_pos = rng.random_range(0..=10) as f32;
     let apple_y_pos = rng.random_range(0..=10) as f32;
@@ -246,4 +255,5 @@ fn spawn_apple(
             ..default()
         },
     ));
+    next_state.set(FoodState::OnTheBoard);
 }
