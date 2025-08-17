@@ -47,8 +47,15 @@ enum FoodState {
 }
 
 fn main() {
-    App::new()
-        .add_plugins(DefaultPlugins)
+    App::new()        .add_plugins((
+        DefaultPlugins.set(WindowPlugin {
+            primary_window: Some(Window {
+                title: "Bevy Snake".into(),
+                ..default()
+            }),
+            ..default()
+        }),
+    ))
         .init_resource::<CurrentSnakeDirection>()
         .init_state::<FoodState>()
         .add_systems(
