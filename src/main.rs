@@ -11,16 +11,18 @@ struct GameBoard {
     cell_size: f32,
 }
 #[derive(Component)]
+#[require(Sprite)]
 struct SnakeHead;
 
 #[derive(Component)]
+#[require(Sprite)]
 struct Apple;
 
 #[derive(Component)]
+#[require(Sprite)]
 struct SnakeSegment;
 
 #[derive(Component)]
-#[require(Transform)]
 struct Position(Vec2);
 
 #[derive(Component)]
@@ -79,42 +81,38 @@ fn setup_board(mut commands: Commands) {
 fn spawn_camera(mut commands: Commands) {
     commands.spawn(Camera2d);
 }
-fn spawn_snake_head(
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
-) {
-    let shape = Rectangle::new(20.0, 20.0);
+fn spawn_snake_head(mut commands: Commands) {
     let colour = Color::Srgba(BLUE);
-    let mesh = meshes.add(shape);
-    let material = materials.add(colour);
     commands.spawn((
         SnakeHead,
-        Mesh2d(mesh),
-        MeshMaterial2d(material),
         GridLocation(Vec2::new(5., 5.)),
+        Sprite {
+            color: colour,
+            custom_size: Some(Vec2::new(20.0, 20.0)),
+            ..default()
+        },
     ));
 }
-fn spawn_snake_body(
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
-) {
-    let shape = Rectangle::new(20.0, 20.0);
+fn spawn_snake_body(mut commands: Commands) {
     let colour = Color::Srgba(YELLOW);
-    let mesh = meshes.add(shape);
-    let material = materials.add(colour);
     commands.spawn((
         SnakeSegment,
-        Mesh2d(mesh.clone()),
-        MeshMaterial2d(material.clone()),
         GridLocation(Vec2::new(5., -4.)),
+        Sprite {
+            color: colour,
+            custom_size: Some(Vec2::new(20.0, 20.0)),
+            ..default()
+        },
     ));
+
     commands.spawn((
         SnakeSegment,
-        Mesh2d(mesh),
-        MeshMaterial2d(material),
         GridLocation(Vec2::new(5., -3.)),
+        Sprite {
+            color: colour,
+            custom_size: Some(Vec2::new(20.0, 20.0)),
+            ..default()
+        },
     ));
 }
 
@@ -233,23 +231,19 @@ fn draw_board(
     }
 }
 fn spawn_apple(
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
     mut commands: Commands,
 ) {
     let mut rng = rand::rng();
     let apple_x_pos = rng.random_range(0..=10) as f32;
     let apple_y_pos = rng.random_range(0..=10) as f32;
-
-    let shape = Rectangle::new(20.0, 20.0);
     let colour = Color::Srgba(RED);
-    let mesh = meshes.add(shape);
-    let material = materials.add(colour);
     commands.spawn((
         Apple,
-        Mesh2d(mesh),
-        MeshMaterial2d(material),
         GridLocation(Vec2::new(apple_x_pos, apple_y_pos)),
+        Sprite {
+            color: colour,
+            custom_size: Some(Vec2::new(20.0, 20.0)),
+            ..default()
+        },
     ));
 }
-
