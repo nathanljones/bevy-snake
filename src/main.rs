@@ -73,6 +73,7 @@ fn main() {
                 project_positions,
                 draw_board,
                 project_board,
+                check_if_snake_has_eaten_apple,
             ),
         )
         //.add_systems(Update, change_speed)
@@ -262,4 +263,19 @@ fn spawn_apple(mut commands: Commands, mut next_state: ResMut<NextState<FoodStat
         },
     ));
     next_state.set(FoodState::OnTheBoard);
+}
+fn check_if_snake_has_eaten_apple(
+    mut commands: Commands,
+    apple: Query<(Entity, &GridLocation), With<Apple>>,
+    snake_head: Query<&GridLocation, With<SnakeHead>>,
+    mut next_state: ResMut<NextState<FoodState>>
+) {
+    if let Ok(snake_head_location) = snake_head.single() {
+        for (apple_entity, apple_position) in &apple {
+            if apple_position.0 == snake_head_location.0 {
+                commands.entity(apple_entity).despawn();
+                next_state.set(FoodState::NeedsSpawning);
+            }
+        }
+    }
 }
