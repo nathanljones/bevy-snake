@@ -62,7 +62,7 @@ fn main() {
                 spawn_snake_head,
                 spawn_snake_body,
                 setup_board,
-                inital_spawn_apple,
+                initial_spawn_apple,
             ),
         )
         .add_systems(
@@ -267,7 +267,7 @@ fn check_if_snake_has_eaten_apple(
     snake_head: Query<&GridLocation, With<SnakeHead>>,
     mut events: EventWriter<AppleEaten>,
 ) {
-    info!("Cheking if snake has eaten apple");
+    info!("Checking if snake has eaten apple");
     if let Ok(snake_head_location) = snake_head.single() {
         for (apple_entity, apple_position) in &apple {
             if apple_position.0 == snake_head_location.0 {
@@ -277,6 +277,6 @@ fn check_if_snake_has_eaten_apple(
         }
     }
 }
-fn inital_spawn_apple(mut events: EventWriter<AppleEaten>) {
+fn initial_spawn_apple(mut events: EventWriter<AppleEaten>) {
     events.write(AppleEaten);
 }
