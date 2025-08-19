@@ -63,6 +63,7 @@ fn main() {
                 spawn_snake_body,
                 setup_board,
                 initial_spawn_apple,
+                spawn_scoreboard,
             ),
         )
         .add_systems(
@@ -279,4 +280,21 @@ fn check_if_snake_has_eaten_apple(
 }
 fn initial_spawn_apple(mut events: EventWriter<AppleEaten>) {
     events.write(AppleEaten);
+}
+fn spawn_scoreboard(mut commands: Commands) {
+    commands.spawn((
+        Text::new("Score"),
+        TextFont {
+            font_size: 50.0,
+            ..default()
+        },
+        TextColor(Color::WHITE),
+        TextLayout::new_with_justify(JustifyText::Center),
+        Node {
+            position_type: PositionType::Absolute,
+            top: Val::Px(5.0),
+            right: Val::Px(20.0),
+            ..default()
+        },
+    ));
 }
