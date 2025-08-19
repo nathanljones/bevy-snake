@@ -3,6 +3,7 @@ use bevy::prelude::*;
 use bevy::time::common_conditions::on_timer;
 use rand::Rng;
 use std::time::Duration;
+use bevy::log::LogPlugin;
 
 #[derive(Resource)]
 struct GameBoard {
@@ -51,7 +52,7 @@ fn main() {
                 ..default()
             }),
             ..default()
-        }),))
+        }).set(LogPlugin{ filter: "error,bevy_snake=trace".to_string(), level: bevy::log::Level::TRACE, ..default()}),))
         .init_resource::<CurrentSnakeDirection>()
         .add_event::<AppleEaten>()
         .add_systems(
@@ -183,10 +184,10 @@ fn project_board(
         transform.translation.x = left_offset + (position.0.x * board.cell_size);
         transform.translation.y = top_offset + (position.0.y * board.cell_size);
         transform.translation.z = 1.0;
-        println!("left offset = {:?}", left_offset);
-        println!("top offset = {:?}", top_offset);
-        println!("position x = {:?}", left_offset * position.0.x);
-        println!("position y = {:?}", left_offset * position.0.y);
+        info!("left offset = {:?}", left_offset);
+        info!("top offset = {:?}", top_offset);
+        info!("position x = {:?}", left_offset * position.0.x);
+        info!("position y = {:?}", left_offset * position.0.y);
     }
 }
 /*
@@ -214,14 +215,14 @@ fn draw_board(
     let green_material = materials.add(Color::Srgba(GREEN));
     let light_green_material = materials.add(Color::Srgba(LIGHT_GREEN));
     /*
-        println!("window width = {:?}", window.width());
-        println!("total board width = {:?}", total_board_width);
+        info!("window width = {:?}", window.width());
+        info!("total board width = {:?}", total_board_width);
 
-        println!("window height = {:?}", window.height());
-        println!("total board height = {:?}", total_board_height);
+        info!("window height = {:?}", window.height());
+        info!("total board height = {:?}", total_board_height);
 
-        println!("left offset = {:?}", left_offset);
-        println!("top offset = {:?}", top_offset);
+        info!("left offset = {:?}", left_offset);
+        info!("top offset = {:?}", top_offset);
     */
     for x in 0..board.width {
         for y in 0..board.height {
@@ -266,6 +267,7 @@ fn check_if_snake_has_eaten_apple(
     snake_head: Query<&GridLocation, With<SnakeHead>>,
     mut events: EventWriter<AppleEaten>,
 ) {
+    info!("Cheking if snake has eaten apple");
     if let Ok(snake_head_location) = snake_head.single() {
         for (apple_entity, apple_position) in &apple {
             if apple_position.0 == snake_head_location.0 {
