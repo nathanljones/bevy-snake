@@ -39,12 +39,9 @@ enum SnakeDirection {
 struct CurrentSnakeDirection {
     snake_direction: SnakeDirection,
 }
-#[derive(Default, States, PartialEq, Debug, Clone, Eq, Hash)]
-enum FoodState {
-    #[default]
-    NeedsSpawning,
-    OnTheBoard,
-}
+
+#[derive(Event)]
+struct AppleEaten;
 
 fn main() {
     App::new()
@@ -56,7 +53,7 @@ fn main() {
             ..default()
         }),))
         .init_resource::<CurrentSnakeDirection>()
-        .init_state::<FoodState>()
+        .add_event::<AppleEaten>()
         .add_systems(
             Startup,
             (
@@ -64,6 +61,7 @@ fn main() {
                 spawn_snake_head,
                 spawn_snake_body,
                 setup_board,
+                inital_spawn_apple,
             ),
         )
         .add_systems(
@@ -81,10 +79,7 @@ fn main() {
             Update,
             move_snake.run_if(on_timer(Duration::from_millis(150))),
         )
-        .add_systems(
-            Update,
-            spawn_apple.run_if(in_state(FoodState::NeedsSpawning)),
-        )
+        .add_systems(Update, spawn_apple)
         .insert_resource(Time::<Fixed>::from_seconds(2.0))
         .run();
 }
@@ -248,7 +243,8 @@ fn draw_board(
         }
     }
 }
-fn spawn_apple(mut commands: Commands, mut next_state: ResMut<NextState<FoodState>>) {
+fn spawn_apple(mut commands: Commands, mut events: EventReader<AppleEaten>) {
+for _event in events.read() {
     let mut rng = rand::rng();
     let apple_x_pos = rng.random_range(0..=10) as f32;
     let apple_y_pos = rng.random_range(0..=10) as f32;
@@ -262,20 +258,23 @@ fn spawn_apple(mut commands: Commands, mut next_state: ResMut<NextState<FoodStat
             ..default()
         },
     ));
-    next_state.set(FoodState::OnTheBoard);
+}
 }
 fn check_if_snake_has_eaten_apple(
     mut commands: Commands,
     apple: Query<(Entity, &GridLocation), With<Apple>>,
     snake_head: Query<&GridLocation, With<SnakeHead>>,
-    mut next_state: ResMut<NextState<FoodState>>
+    mut events: EventWriter<AppleEaten>,
 ) {
     if let Ok(snake_head_location) = snake_head.single() {
         for (apple_entity, apple_position) in &apple {
             if apple_position.0 == snake_head_location.0 {
                 commands.entity(apple_entity).despawn();
-                next_state.set(FoodState::NeedsSpawning);
+                events.write(AppleEaten);
             }
         }
     }
+}
+fn inital_spawn_apple(mut events: EventWriter<AppleEaten>) {
+    events.write(AppleEaten);
 }
