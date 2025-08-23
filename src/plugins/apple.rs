@@ -1,13 +1,13 @@
-use bevy::prelude::EventWriter;
-use bevy::prelude::Update;
-use bevy::prelude::{default, Commands, EventReader, Sprite};
+use crate::components::GridLocation;
 use bevy::app::{App, Plugin, Startup};
 use bevy::color::Color;
 use bevy::color::palettes::basic::RED;
 use bevy::math::Vec2;
+use bevy::prelude::EventWriter;
+use bevy::prelude::Update;
+use bevy::prelude::{Commands, EventReader, Sprite, default};
 use bevy::prelude::{Component, Event};
 use rand::Rng;
-use crate::components::GridLocation;
 #[derive(Component)]
 #[require(Sprite)]
 pub struct Apple;
@@ -20,7 +20,6 @@ impl Plugin for Apple {
         app.add_systems(Startup, initial_spawn_apple);
         app.add_systems(Update, spawn_apple);
     }
-
 }
 fn spawn_apple(mut commands: Commands, mut events: EventReader<AppleEaten>) {
     for _event in events.read() {
