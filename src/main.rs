@@ -1,4 +1,4 @@
-use bevy_snake::components::GridLocation;
+use bevy_snake::components::{GridLocation, Position};
 use bevy_snake::plugins::apple::AppleEaten;
 use bevy_snake::plugins::apple::Apple;
 use bevy::color::palettes::css::{BLUE, GREEN, LIGHT_GREEN, RED, YELLOW};
@@ -28,8 +28,7 @@ struct SnakeHead;
 #[require(Sprite)]
 struct SnakeSegment;
 
-#[derive(Component)]
-struct Position(Vec2);
+
 
 
 #[derive(Default)]
