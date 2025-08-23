@@ -54,12 +54,12 @@ fn main() {
         .add_plugins(Apple)
         .init_resource::<CurrentSnakeDirection>()
         .add_event::<AppleEaten>()
+        .add_systems(PreStartup,setup_board)
         .add_systems(
             Startup,
             (
                 spawn_snake_head,
                 spawn_snake_body,
-                setup_board,
                 spawn_scoreboard,
             ),
         )
@@ -90,26 +90,26 @@ fn setup_board(mut commands: Commands) {
     commands.insert_resource(board);
 }
 
-fn spawn_snake_head(mut commands: Commands) {
+fn spawn_snake_head(    board: Res<GameBoard>, mut commands: Commands) {
     let colour = Color::Srgba(BLUE);
     commands.spawn((
         SnakeHead,
         GridLocation(Vec2::new(5., 5.)),
         Sprite {
             color: colour,
-            custom_size: Some(Vec2::new(20.0, 20.0)),
+            custom_size: Some(Vec2::new(board.cell_size as f32, board.cell_size as f32)),
             ..default()
         },
     ));
 }
-fn spawn_snake_body(mut commands: Commands) {
+fn spawn_snake_body(board: Res<GameBoard>,mut commands: Commands) {
     let colour = Color::Srgba(YELLOW);
     commands.spawn((
         SnakeSegment,
         GridLocation(Vec2::new(5., -4.)),
         Sprite {
             color: colour,
-            custom_size: Some(Vec2::new(20.0, 20.0)),
+            custom_size: Some(Vec2::new(board.cell_size as f32, board.cell_size as f32)),
             ..default()
         },
     ));
