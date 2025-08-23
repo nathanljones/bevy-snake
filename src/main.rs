@@ -1,16 +1,12 @@
-use bevy_snake::components::{GridLocation, Position};
-use bevy_snake::plugins::apple::AppleEaten;
-use bevy_snake::plugins::apple::Apple;
-use bevy::color::palettes::css::{BLUE, GREEN, LIGHT_GREEN, RED, YELLOW};
+use bevy::color::palettes::css::{BLUE, GREEN, LIGHT_GREEN, YELLOW};
+use bevy::log::LogPlugin;
 use bevy::prelude::*;
 use bevy::time::common_conditions::on_timer;
-use rand::Rng;
-use std::time::Duration;
-use bevy::log::LogPlugin;
-
+use bevy_snake::components::{GridLocation, Position};
+use bevy_snake::plugins::apple::Apple;
+use bevy_snake::plugins::apple::AppleEaten;
 use bevy_snake::plugins::camera::MainCamera;
-use bevy_snake::plugins::apple;
-use bevy_snake::components;
+use std::time::Duration;
 
 #[derive(Resource)]
 struct GameBoard {
@@ -22,14 +18,9 @@ struct GameBoard {
 #[require(Sprite)]
 struct SnakeHead;
 
-
-
 #[derive(Component)]
 #[require(Sprite)]
 struct SnakeSegment;
-
-
-
 
 #[derive(Default)]
 enum SnakeDirection {
@@ -44,17 +35,21 @@ struct CurrentSnakeDirection {
     snake_direction: SnakeDirection,
 }
 
-
-
 fn main() {
     App::new()
-        .add_plugins((DefaultPlugins.set(WindowPlugin {
-            primary_window: Some(Window {
-                title: "Bevy Snake".into(),
+        .add_plugins((DefaultPlugins
+            .set(WindowPlugin {
+                primary_window: Some(Window {
+                    title: "Bevy Snake".into(),
+                    ..default()
+                }),
                 ..default()
-            }),
-            ..default()
-        }).set(LogPlugin{ filter: "error,bevy_snake=trace".to_string(), level: bevy::log::Level::TRACE, ..default()}),))
+            })
+            .set(LogPlugin {
+                filter: "error,bevy_snake=trace".to_string(),
+                level: bevy::log::Level::TRACE,
+                ..default()
+            }),))
         .add_plugins(MainCamera)
         .add_plugins(Apple)
         .init_resource::<CurrentSnakeDirection>()
