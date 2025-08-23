@@ -5,6 +5,8 @@ use rand::Rng;
 use std::time::Duration;
 use bevy::log::LogPlugin;
 
+use bevy_snake::plugins::camera::MainCamera;
+
 #[derive(Resource)]
 struct GameBoard {
     width: u32,
@@ -53,12 +55,12 @@ fn main() {
             }),
             ..default()
         }).set(LogPlugin{ filter: "error,bevy_snake=trace".to_string(), level: bevy::log::Level::TRACE, ..default()}),))
+        .add_plugins(MainCamera)
         .init_resource::<CurrentSnakeDirection>()
         .add_event::<AppleEaten>()
         .add_systems(
             Startup,
             (
-                spawn_camera,
                 spawn_snake_head,
                 spawn_snake_body,
                 setup_board,
@@ -93,9 +95,7 @@ fn setup_board(mut commands: Commands) {
     };
     commands.insert_resource(board);
 }
-fn spawn_camera(mut commands: Commands) {
-    commands.spawn(Camera2d);
-}
+
 fn spawn_snake_head(mut commands: Commands) {
     let colour = Color::Srgba(BLUE);
     commands.spawn((
@@ -193,7 +193,7 @@ fn project_board(
 }
 /*
 fn change_speed( keyboard_input: Res<ButtonInput<KeyCode>>,mut time: ResMut<Time<Fixed>>){
-    if keyboard_input.pressed(KeyCode::Space) {
+        if keyboard_input.pressed(KeyCode::Space) {
         time.set_timestep(Duration::from_secs(1));
     }
 }
