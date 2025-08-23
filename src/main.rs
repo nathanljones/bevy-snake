@@ -6,14 +6,10 @@ use bevy_snake::components::{GridLocation, Position};
 use bevy_snake::plugins::apple::Apple;
 use bevy_snake::plugins::apple::AppleEaten;
 use bevy_snake::plugins::camera::MainCamera;
+use bevy_snake::plugins::game_board::GameBoard;
+use bevy_snake::plugins::projections::Projection;
 use std::time::Duration;
 
-#[derive(Resource)]
-struct GameBoard {
-    width: u32,
-    height: u32,
-    cell_size: f32,
-}
 #[derive(Component)]
 #[require(Sprite)]
 struct SnakeHead;
@@ -51,25 +47,20 @@ fn main() {
                 ..default()
             }),))
         .add_plugins(MainCamera)
+        .add_plugins(GameBoard::default())
         .add_plugins(Apple)
+        .add_plugins(Projection)
         .init_resource::<CurrentSnakeDirection>()
         .add_event::<AppleEaten>()
-        .add_systems(PreStartup,setup_board)
         .add_systems(
             Startup,
-            (
-                spawn_snake_head,
-                spawn_snake_body,
-                spawn_scoreboard,
-            ),
+            (spawn_snake_head, spawn_snake_body, spawn_scoreboard),
         )
         .add_systems(
             Update,
             (
                 change_snake_direction,
-                project_positions,
                 draw_board,
-                project_board,
                 check_if_snake_has_eaten_apple,
             ),
         )
@@ -81,35 +72,33 @@ fn main() {
         .insert_resource(Time::<Fixed>::from_seconds(2.0))
         .run();
 }
-fn setup_board(mut commands: Commands) {
-    let board = GameBoard {
-        width: 10,
-        height: 10,
-        cell_size: 20.0,
-    };
-    commands.insert_resource(board);
-}
 
-fn spawn_snake_head(    board: Res<GameBoard>, mut commands: Commands) {
+fn spawn_snake_head(board: Res<GameBoard>, mut commands: Commands) {
     let colour = Color::Srgba(BLUE);
     commands.spawn((
         SnakeHead,
         GridLocation(Vec2::new(5., 5.)),
         Sprite {
             color: colour,
-            custom_size: Some(Vec2::new(board.cell_size as f32, board.cell_size as f32)),
+            custom_size: Some(Vec2::new(
+                board.cell_size() as f32,
+                board.cell_size() as f32,
+            )),
             ..default()
         },
     ));
 }
-fn spawn_snake_body(board: Res<GameBoard>,mut commands: Commands) {
+fn spawn_snake_body(board: Res<GameBoard>, mut commands: Commands) {
     let colour = Color::Srgba(YELLOW);
     commands.spawn((
         SnakeSegment,
         GridLocation(Vec2::new(5., -4.)),
         Sprite {
             color: colour,
-            custom_size: Some(Vec2::new(board.cell_size as f32, board.cell_size as f32)),
+            custom_size: Some(Vec2::new(
+                board.cell_size() as f32,
+                board.cell_size() as f32,
+            )),
             ..default()
         },
     ));
@@ -160,31 +149,7 @@ fn move_snake(
         }
     }
 }
-fn project_positions(mut block_position: Query<(&mut Transform, &Position)>) {
-    for (mut transform, position) in &mut block_position {
-        transform.translation = position.0.extend(0.);
-    }
-}
 
-fn project_board(
-    board: Res<GameBoard>,
-    mut block_position: Query<(&mut Transform, &GridLocation)>,
-) {
-    let total_board_width = board.width as f32 * board.cell_size;
-    let total_board_height = board.height as f32 * board.cell_size;
-    let left_offset = -total_board_width / 2.0;
-    let top_offset = -total_board_height / 2.0;
-
-    for (mut transform, position) in &mut block_position {
-        transform.translation.x = left_offset + (position.0.x * board.cell_size);
-        transform.translation.y = top_offset + (position.0.y * board.cell_size);
-        transform.translation.z = 1.0;
-        info!("left offset = {:?}", left_offset);
-        info!("top offset = {:?}", top_offset);
-        info!("position x = {:?}", left_offset * position.0.x);
-        info!("position y = {:?}", left_offset * position.0.y);
-    }
-}
 /*
 fn change_speed( keyboard_input: Res<ButtonInput<KeyCode>>,mut time: ResMut<Time<Fixed>>){
         if keyboard_input.pressed(KeyCode::Space) {
@@ -199,8 +164,8 @@ fn draw_board(
     mut materials: ResMut<Assets<ColorMaterial>>,
     mut commands: Commands,
 ) {
-    let total_board_width = board.width as f32 * board.cell_size;
-    let total_board_height = board.height as f32 * board.cell_size;
+    let total_board_width = board.width() as f32 * board.cell_size();
+    let total_board_height = board.height() as f32 * board.cell_size();
     let left_offset = -total_board_width / 2.0;
     let top_offset = -total_board_height / 2.0;
 
@@ -219,8 +184,8 @@ fn draw_board(
         info!("left offset = {:?}", left_offset);
         info!("top offset = {:?}", top_offset);
     */
-    for x in 0..board.width {
-        for y in 0..board.height {
+    for x in 0..board.width() {
+        for y in 0..board.height() {
             commands.spawn((
                 SnakeHead,
                 Mesh2d(mesh.clone()),
