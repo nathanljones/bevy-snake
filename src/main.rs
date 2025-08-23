@@ -1,3 +1,6 @@
+use bevy_snake::components::GridLocation;
+use bevy_snake::plugins::apple::AppleEaten;
+use bevy_snake::plugins::apple::Apple;
 use bevy::color::palettes::css::{BLUE, GREEN, LIGHT_GREEN, RED, YELLOW};
 use bevy::prelude::*;
 use bevy::time::common_conditions::on_timer;
@@ -6,6 +9,8 @@ use std::time::Duration;
 use bevy::log::LogPlugin;
 
 use bevy_snake::plugins::camera::MainCamera;
+use bevy_snake::plugins::apple;
+use bevy_snake::components;
 
 #[derive(Resource)]
 struct GameBoard {
@@ -17,9 +22,7 @@ struct GameBoard {
 #[require(Sprite)]
 struct SnakeHead;
 
-#[derive(Component)]
-#[require(Sprite)]
-struct Apple;
+
 
 #[derive(Component)]
 #[require(Sprite)]
@@ -28,8 +31,7 @@ struct SnakeSegment;
 #[derive(Component)]
 struct Position(Vec2);
 
-#[derive(Component)]
-struct GridLocation(Vec2);
+
 #[derive(Default)]
 enum SnakeDirection {
     #[default]
@@ -43,8 +45,7 @@ struct CurrentSnakeDirection {
     snake_direction: SnakeDirection,
 }
 
-#[derive(Event)]
-struct AppleEaten;
+
 
 fn main() {
     App::new()
@@ -56,6 +57,7 @@ fn main() {
             ..default()
         }).set(LogPlugin{ filter: "error,bevy_snake=trace".to_string(), level: bevy::log::Level::TRACE, ..default()}),))
         .add_plugins(MainCamera)
+        .add_plugins(Apple)
         .init_resource::<CurrentSnakeDirection>()
         .add_event::<AppleEaten>()
         .add_systems(
@@ -64,7 +66,6 @@ fn main() {
                 spawn_snake_head,
                 spawn_snake_body,
                 setup_board,
-                initial_spawn_apple,
                 spawn_scoreboard,
             ),
         )
@@ -83,7 +84,6 @@ fn main() {
             Update,
             move_snake.run_if(on_timer(Duration::from_millis(150))),
         )
-        .add_systems(Update, spawn_apple)
         .insert_resource(Time::<Fixed>::from_seconds(2.0))
         .run();
 }
@@ -245,23 +245,7 @@ fn draw_board(
         }
     }
 }
-fn spawn_apple(mut commands: Commands, mut events: EventReader<AppleEaten>) {
-for _event in events.read() {
-    let mut rng = rand::rng();
-    let apple_x_pos = rng.random_range(0..=10) as f32;
-    let apple_y_pos = rng.random_range(0..=10) as f32;
-    let colour = Color::Srgba(RED);
-    commands.spawn((
-        Apple,
-        GridLocation(Vec2::new(apple_x_pos, apple_y_pos)),
-        Sprite {
-            color: colour,
-            custom_size: Some(Vec2::new(20.0, 20.0)),
-            ..default()
-        },
-    ));
-}
-}
+
 fn check_if_snake_has_eaten_apple(
     mut commands: Commands,
     apple: Query<(Entity, &GridLocation), With<Apple>>,
@@ -278,9 +262,7 @@ fn check_if_snake_has_eaten_apple(
         }
     }
 }
-fn initial_spawn_apple(mut events: EventWriter<AppleEaten>) {
-    events.write(AppleEaten);
-}
+
 fn spawn_scoreboard(mut commands: Commands) {
     commands.spawn((
         Text::new("Score"),
