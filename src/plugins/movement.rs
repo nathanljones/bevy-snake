@@ -1,11 +1,11 @@
-use std::time::Duration;
-use bevy::app::{App, Update};
-use bevy::prelude::{IntoScheduleConfigs, Plugin, Query, Res, With, Without};
-use bevy::time::common_conditions::on_timer;
 use crate::components::GridLocation;
 use crate::plugins::controls::{CurrentSnakeDirection, SnakeDirection};
 use crate::plugins::snake_body::SnakeSegment;
 use crate::plugins::snake_head::SnakeHead;
+use bevy::app::{App, Update};
+use bevy::prelude::{IntoScheduleConfigs, Plugin, Query, Res, With, Without};
+use bevy::time::common_conditions::on_timer;
+use std::time::Duration;
 
 pub struct MovementPlugin;
 impl Plugin for MovementPlugin {

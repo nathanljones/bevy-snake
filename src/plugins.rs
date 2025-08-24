@@ -1,10 +1,10 @@
 pub mod apple;
 pub mod camera;
-pub mod game_board;
-pub mod projections;
-pub mod snake_head;
-pub mod snake_body;
-pub mod controls;
 pub mod collision;
+pub mod controls;
+pub mod game_board;
 pub mod movement;
+pub mod projections;
 pub mod score;
+pub mod snake_body;
+pub mod snake_head;

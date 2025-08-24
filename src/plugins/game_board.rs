@@ -1,11 +1,13 @@
+use crate::components::Position;
 use bevy::app::{App, Plugin, PreStartup};
 use bevy::asset::Assets;
 use bevy::color::Color;
 use bevy::color::palettes::basic::GREEN;
 use bevy::color::palettes::css::LIGHT_GREEN;
 use bevy::math::Vec2;
-use bevy::prelude::{ColorMaterial, Commands, Mesh, Mesh2d, MeshMaterial2d, Rectangle, Res, ResMut, Resource, Update};
-use crate::components::Position;
+use bevy::prelude::{
+    ColorMaterial, Commands, Mesh, Mesh2d, MeshMaterial2d, Rectangle, Res, ResMut, Resource, Update,
+};
 
 #[derive(Resource)]
 pub struct GameBoard {
@@ -99,6 +101,4 @@ fn draw_board(
             ));
         }
     }
-
-
 }

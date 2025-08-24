@@ -1,12 +1,14 @@
 use bevy::app::{App, Plugin, Startup};
 use bevy::color::Color;
-use bevy::prelude::{default, Commands, JustifyText, Node, PositionType, Text, TextColor, TextFont, TextLayout, Val};
+use bevy::prelude::{
+    Commands, JustifyText, Node, PositionType, Text, TextColor, TextFont, TextLayout, Val, default,
+};
 
 pub struct ScorePlugin;
 
-impl Plugin for ScorePlugin{
+impl Plugin for ScorePlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup,spawn_scoreboard);
+        app.add_systems(Startup, spawn_scoreboard);
     }
 }
 fn spawn_scoreboard(mut commands: Commands) {

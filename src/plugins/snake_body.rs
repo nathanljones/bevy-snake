@@ -1,10 +1,10 @@
 use crate::components::GridLocation;
 use crate::plugins::game_board::GameBoard;
 use bevy::app::{App, Plugin, Startup};
-use bevy::color::palettes::basic::YELLOW;
 use bevy::color::Color;
+use bevy::color::palettes::basic::YELLOW;
 use bevy::math::Vec2;
-use bevy::prelude::{default, Commands, Component, Res, Sprite};
+use bevy::prelude::{Commands, Component, Res, Sprite, default};
 
 #[derive(Component)]
 #[require(Sprite)]

@@ -1,14 +1,14 @@
-use bevy::app::{App, Plugin};
-use bevy::log::info;
-use bevy::prelude::{Commands, Entity, EventWriter, Query, Update, With};
 use crate::components::GridLocation;
 use crate::plugins::apple::{Apple, AppleEaten};
 use crate::plugins::snake_head::SnakeHead;
+use bevy::app::{App, Plugin};
+use bevy::log::info;
+use bevy::prelude::{Commands, Entity, EventWriter, Query, Update, With};
 pub struct CollisionPlugin;
 
 impl Plugin for CollisionPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update,check_if_snake_has_eaten_apple);
+        app.add_systems(Update, check_if_snake_has_eaten_apple);
     }
 }
 fn check_if_snake_has_eaten_apple(

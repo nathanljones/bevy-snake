@@ -36,18 +36,10 @@ fn main() {
         .add_plugins(CollisionPlugin)
         .add_plugins(MovementPlugin)
         .add_plugins(ScorePlugin)
-
         //.add_systems(Update, change_speed)
-
         .insert_resource(Time::<Fixed>::from_seconds(2.0))
         .run();
 }
-
-
-
-
-
-
 
 /*
 fn change_speed( keyboard_input: Res<ButtonInput<KeyCode>>,mut time: ResMut<Time<Fixed>>){
@@ -56,8 +48,3 @@ fn change_speed( keyboard_input: Res<ButtonInput<KeyCode>>,mut time: ResMut<Time
     }
 }
 */
-
-
-
-
-
