@@ -1,19 +1,15 @@
 use bevy::log::LogPlugin;
 use bevy::prelude::*;
-use bevy::time::common_conditions::on_timer;
-use bevy_snake::components::GridLocation;
 use bevy_snake::plugins::apple::Apple;
 use bevy_snake::plugins::apple::AppleEaten;
 use bevy_snake::plugins::camera::MainCamera;
 use bevy_snake::plugins::collision::CollisionPlugin;
 use bevy_snake::plugins::controls::ControlsPlugin;
-use bevy_snake::plugins::controls::CurrentSnakeDirection;
-use bevy_snake::plugins::controls::SnakeDirection;
 use bevy_snake::plugins::game_board::GameBoard;
+use bevy_snake::plugins::movement::MovementPlugin;
 use bevy_snake::plugins::projections::Projection;
 use bevy_snake::plugins::snake_body::SnakeSegment;
 use bevy_snake::plugins::snake_head::SnakeHead;
-use std::time::Duration;
 
 fn main() {
     App::new()
@@ -38,16 +34,14 @@ fn main() {
         .add_plugins(Projection)
         .add_plugins(ControlsPlugin)
         .add_plugins(CollisionPlugin)
+        .add_plugins(MovementPlugin)
         .add_event::<AppleEaten>()
         .add_systems(
             Startup,
             spawn_scoreboard,
         )
         //.add_systems(Update, change_speed)
-        .add_systems(
-            Update,
-            move_snake.run_if(on_timer(Duration::from_millis(150))),
-        )
+
         .insert_resource(Time::<Fixed>::from_seconds(2.0))
         .run();
 }
@@ -57,26 +51,6 @@ fn main() {
 
 
 
-fn move_snake(
-    mut snake_head: Query<&mut GridLocation, With<SnakeHead>>,
-    mut snake_segments: Query<&mut GridLocation, (With<SnakeSegment>, Without<SnakeHead>)>,
-    current_snake_direction: Res<CurrentSnakeDirection>,
-) {
-    if let Ok(mut snake_head_position) = snake_head.single_mut() {
-        let snake_head_pos = snake_head_position.0;
-        match current_snake_direction.snake_direction {
-            SnakeDirection::Up => snake_head_position.0.y += 1.0,
-            SnakeDirection::Down => snake_head_position.0.y -= 1.0,
-            SnakeDirection::Left => snake_head_position.0.x -= 1.0,
-            SnakeDirection::Right => snake_head_position.0.x += 1.0,
-        }
-
-        let mut temp_pos = snake_head_pos;
-        for mut snake_segment in &mut snake_segments.iter_mut() {
-            std::mem::swap(&mut snake_segment.0, &mut temp_pos);
-        }
-    }
-}
 
 /*
 fn change_speed( keyboard_input: Res<ButtonInput<KeyCode>>,mut time: ResMut<Time<Fixed>>){
