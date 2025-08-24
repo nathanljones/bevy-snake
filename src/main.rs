@@ -8,11 +8,9 @@ use bevy_snake::plugins::apple::AppleEaten;
 use bevy_snake::plugins::camera::MainCamera;
 use bevy_snake::plugins::game_board::GameBoard;
 use bevy_snake::plugins::projections::Projection;
+use bevy_snake::plugins::snake_head::SnakeHead;
 use std::time::Duration;
 
-#[derive(Component)]
-#[require(Sprite)]
-struct SnakeHead;
 
 #[derive(Component)]
 #[require(Sprite)]
@@ -48,13 +46,14 @@ fn main() {
             }),))
         .add_plugins(MainCamera)
         .add_plugins(GameBoard::default())
+        .add_plugins(SnakeHead)
         .add_plugins(Apple)
         .add_plugins(Projection)
         .init_resource::<CurrentSnakeDirection>()
         .add_event::<AppleEaten>()
         .add_systems(
             Startup,
-            (spawn_snake_head, spawn_snake_body, spawn_scoreboard),
+            (spawn_snake_body, spawn_scoreboard),
         )
         .add_systems(
             Update,
@@ -72,21 +71,7 @@ fn main() {
         .run();
 }
 
-fn spawn_snake_head(board: Res<GameBoard>, mut commands: Commands) {
-    let colour = Color::Srgba(BLUE);
-    commands.spawn((
-        SnakeHead,
-        GridLocation(Vec2::new(5., 5.)),
-        Sprite {
-            color: colour,
-            custom_size: Some(Vec2::new(
-                board.cell_size() as f32,
-                board.cell_size() as f32,
-            )),
-            ..default()
-        },
-    ));
-}
+
 fn spawn_snake_body(board: Res<GameBoard>, mut commands: Commands) {
     let colour = Color::Srgba(YELLOW);
     commands.spawn((
