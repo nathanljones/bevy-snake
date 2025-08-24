@@ -1,13 +1,13 @@
 use bevy::log::LogPlugin;
 use bevy::prelude::*;
 use bevy_snake::plugins::apple::Apple;
-use bevy_snake::plugins::apple::AppleEaten;
 use bevy_snake::plugins::camera::MainCamera;
 use bevy_snake::plugins::collision::CollisionPlugin;
 use bevy_snake::plugins::controls::ControlsPlugin;
 use bevy_snake::plugins::game_board::GameBoard;
 use bevy_snake::plugins::movement::MovementPlugin;
 use bevy_snake::plugins::projections::Projection;
+use bevy_snake::plugins::score::ScorePlugin;
 use bevy_snake::plugins::snake_body::SnakeSegment;
 use bevy_snake::plugins::snake_head::SnakeHead;
 
@@ -35,11 +35,8 @@ fn main() {
         .add_plugins(ControlsPlugin)
         .add_plugins(CollisionPlugin)
         .add_plugins(MovementPlugin)
-        .add_event::<AppleEaten>()
-        .add_systems(
-            Startup,
-            spawn_scoreboard,
-        )
+        .add_plugins(ScorePlugin)
+
         //.add_systems(Update, change_speed)
 
         .insert_resource(Time::<Fixed>::from_seconds(2.0))
@@ -64,20 +61,3 @@ fn change_speed( keyboard_input: Res<ButtonInput<KeyCode>>,mut time: ResMut<Time
 
 
 
-fn spawn_scoreboard(mut commands: Commands) {
-    commands.spawn((
-        Text::new("Score"),
-        TextFont {
-            font_size: 50.0,
-            ..default()
-        },
-        TextColor(Color::WHITE),
-        TextLayout::new_with_justify(JustifyText::Center),
-        Node {
-            position_type: PositionType::Absolute,
-            top: Val::Px(5.0),
-            right: Val::Px(20.0),
-            ..default()
-        },
-    ));
-}

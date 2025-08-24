@@ -7,3 +7,4 @@ pub mod snake_body;
 pub mod controls;
 pub mod collision;
 pub mod movement;
+pub mod score;

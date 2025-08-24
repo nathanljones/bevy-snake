@@ -19,6 +19,7 @@ impl Plugin for Apple {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, initial_spawn_apple);
         app.add_systems(Update, spawn_apple);
+        app.add_event::<AppleEaten>();
     }
 }
 fn spawn_apple(mut commands: Commands, mut events: EventReader<AppleEaten>) {
