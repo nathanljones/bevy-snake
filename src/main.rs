@@ -1,19 +1,19 @@
-use bevy_snake::plugins::controls::SnakeDirection;
-use bevy_snake::plugins::controls::CurrentSnakeDirection;
-use bevy::color::palettes::css::{BLUE, GREEN, LIGHT_GREEN, YELLOW};
 use bevy::log::LogPlugin;
 use bevy::prelude::*;
 use bevy::time::common_conditions::on_timer;
-use bevy_snake::components::{GridLocation, Position};
+use bevy_snake::components::GridLocation;
 use bevy_snake::plugins::apple::Apple;
 use bevy_snake::plugins::apple::AppleEaten;
 use bevy_snake::plugins::camera::MainCamera;
+use bevy_snake::plugins::collision::CollisionPlugin;
+use bevy_snake::plugins::controls::ControlsPlugin;
+use bevy_snake::plugins::controls::CurrentSnakeDirection;
+use bevy_snake::plugins::controls::SnakeDirection;
 use bevy_snake::plugins::game_board::GameBoard;
 use bevy_snake::plugins::projections::Projection;
 use bevy_snake::plugins::snake_body::SnakeSegment;
 use bevy_snake::plugins::snake_head::SnakeHead;
 use std::time::Duration;
-use bevy_snake::plugins::controls::ControlsPlugin;
 
 fn main() {
     App::new()
@@ -37,16 +37,11 @@ fn main() {
         .add_plugins(Apple)
         .add_plugins(Projection)
         .add_plugins(ControlsPlugin)
+        .add_plugins(CollisionPlugin)
         .add_event::<AppleEaten>()
         .add_systems(
             Startup,
             spawn_scoreboard,
-        )
-        .add_systems(
-            Update,
-            (
-                check_if_snake_has_eaten_apple,
-            ),
         )
         //.add_systems(Update, change_speed)
         .add_systems(
@@ -93,22 +88,7 @@ fn change_speed( keyboard_input: Res<ButtonInput<KeyCode>>,mut time: ResMut<Time
 
 
 
-fn check_if_snake_has_eaten_apple(
-    mut commands: Commands,
-    apple: Query<(Entity, &GridLocation), With<Apple>>,
-    snake_head: Query<&GridLocation, With<SnakeHead>>,
-    mut events: EventWriter<AppleEaten>,
-) {
-    info!("Checking if snake has eaten apple");
-    if let Ok(snake_head_location) = snake_head.single() {
-        for (apple_entity, apple_position) in &apple {
-            if apple_position.0 == snake_head_location.0 {
-                commands.entity(apple_entity).despawn();
-                events.write(AppleEaten);
-            }
-        }
-    }
-}
+
 
 fn spawn_scoreboard(mut commands: Commands) {
     commands.spawn((

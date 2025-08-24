@@ -5,3 +5,4 @@ pub mod projections;
 pub mod snake_head;
 pub mod snake_body;
 pub mod controls;
+pub mod collision;
