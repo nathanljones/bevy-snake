@@ -1,3 +1,5 @@
+use bevy_snake::plugins::controls::SnakeDirection;
+use bevy_snake::plugins::controls::CurrentSnakeDirection;
 use bevy::color::palettes::css::{BLUE, GREEN, LIGHT_GREEN, YELLOW};
 use bevy::log::LogPlugin;
 use bevy::prelude::*;
@@ -11,19 +13,7 @@ use bevy_snake::plugins::projections::Projection;
 use bevy_snake::plugins::snake_body::SnakeSegment;
 use bevy_snake::plugins::snake_head::SnakeHead;
 use std::time::Duration;
-
-#[derive(Default)]
-enum SnakeDirection {
-    #[default]
-    Up,
-    Down,
-    Left,
-    Right,
-}
-#[derive(Resource, Default)]
-struct CurrentSnakeDirection {
-    snake_direction: SnakeDirection,
-}
+use bevy_snake::plugins::controls::ControlsPlugin;
 
 fn main() {
     App::new()
@@ -46,16 +36,15 @@ fn main() {
         .add_plugins(SnakeSegment)
         .add_plugins(Apple)
         .add_plugins(Projection)
-        .init_resource::<CurrentSnakeDirection>()
+        .add_plugins(ControlsPlugin)
         .add_event::<AppleEaten>()
         .add_systems(
             Startup,
-            ( spawn_scoreboard),
+            spawn_scoreboard,
         )
         .add_systems(
             Update,
             (
-                change_snake_direction,
                 check_if_snake_has_eaten_apple,
             ),
         )
@@ -71,20 +60,7 @@ fn main() {
 
 
 
-fn change_snake_direction(
-    keyboard_input: Res<ButtonInput<KeyCode>>,
-    mut current_snake_direction: ResMut<CurrentSnakeDirection>,
-) {
-    if keyboard_input.pressed(KeyCode::ArrowUp) {
-        current_snake_direction.snake_direction = SnakeDirection::Up;
-    } else if keyboard_input.pressed(KeyCode::ArrowDown) {
-        current_snake_direction.snake_direction = SnakeDirection::Down;
-    } else if keyboard_input.pressed(KeyCode::ArrowLeft) {
-        current_snake_direction.snake_direction = SnakeDirection::Left;
-    } else if keyboard_input.pressed(KeyCode::ArrowRight) {
-        current_snake_direction.snake_direction = SnakeDirection::Right;
-    }
-}
+
 
 fn move_snake(
     mut snake_head: Query<&mut GridLocation, With<SnakeHead>>,
