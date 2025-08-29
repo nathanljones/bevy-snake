@@ -1,15 +1,15 @@
 use bevy::log::LogPlugin;
 use bevy::prelude::*;
-use bevy_snake::plugins::apple::Apple;
-use bevy_snake::plugins::camera::MainCamera;
+use bevy_snake::plugins::apple::ApplePlugin;
+use bevy_snake::plugins::camera::MainCameraPlugin;
 use bevy_snake::plugins::collision::CollisionPlugin;
 use bevy_snake::plugins::controls::ControlsPlugin;
-use bevy_snake::plugins::game_board::GameBoard;
+use bevy_snake::plugins::game_board::GameBoardPlugin;
 use bevy_snake::plugins::movement::MovementPlugin;
-use bevy_snake::plugins::projections::Projection;
+use bevy_snake::plugins::projections::{ProjectionPlugin};
 use bevy_snake::plugins::score::ScorePlugin;
-use bevy_snake::plugins::snake_body::SnakeSegment;
-use bevy_snake::plugins::snake_head::SnakeHead;
+use bevy_snake::plugins::snake_body::SnakeBodyPlugin;
+use bevy_snake::plugins::snake_head::SnakeHeadPlugin;
 
 fn main() {
     App::new()
@@ -26,12 +26,12 @@ fn main() {
                 level: bevy::log::Level::TRACE,
                 ..default()
             }),))
-        .add_plugins(MainCamera)
-        .add_plugins(GameBoard::default())
-        .add_plugins(SnakeHead)
-        .add_plugins(SnakeSegment)
-        .add_plugins(Apple)
-        .add_plugins(Projection)
+        .add_plugins(MainCameraPlugin)
+        .add_plugins(GameBoardPlugin)
+        .add_plugins(SnakeHeadPlugin)
+        .add_plugins(SnakeBodyPlugin)
+        .add_plugins(ApplePlugin)
+        .add_plugins(ProjectionPlugin)
         .add_plugins(ControlsPlugin)
         .add_plugins(CollisionPlugin)
         .add_plugins(MovementPlugin)

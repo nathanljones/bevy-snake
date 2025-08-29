@@ -15,7 +15,9 @@ pub struct Apple;
 #[derive(Event)]
 pub struct AppleEaten;
 
-impl Plugin for Apple {
+
+pub struct ApplePlugin;
+impl Plugin for ApplePlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, initial_spawn_apple);
         app.add_systems(Update, spawn_apple);

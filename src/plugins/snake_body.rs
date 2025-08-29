@@ -9,7 +9,9 @@ use bevy::prelude::{Commands, Component, Res, Sprite, default};
 #[derive(Component)]
 #[require(Sprite)]
 pub struct SnakeSegment;
-impl Plugin for SnakeSegment {
+
+pub struct SnakeBodyPlugin;
+impl Plugin for SnakeBodyPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, spawn_snake_body);
     }
@@ -22,8 +24,8 @@ fn spawn_snake_body(board: Res<GameBoard>, mut commands: Commands) {
         Sprite {
             color: colour,
             custom_size: Some(Vec2::new(
-                board.cell_size() as f32,
-                board.cell_size() as f32,
+                board.cell_size as f32,
+                board.cell_size as f32,
             )),
             ..default()
         },
